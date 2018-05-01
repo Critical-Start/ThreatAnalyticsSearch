@@ -1,0 +1,487 @@
+﻿<html>
+<head><title>Critical Start</title>
+<link rel="stylesheet" type="text/css" href="css/screen.css" />
+<script type="text/javascript" src="./js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="./js/jquery-ui-1.7.1.custom.min.js"></script>
+<script src="./js/getset.js"></script>
+<script src="./js/options.js"></script>
+<script src="./js/RSA.js"></script>
+<script src="./js/NWI.js"></script>
+<script src="./js/CBC.js"></script>
+<script src="./js/aes.js"></script>
+
+</head>
+
+<body>
+<div class="contain">
+<div align="center">
+    <div>
+        <div class="left">
+            <a href="http://www.criticalstart.com/threat-analytics-chrome-plugin/"><img class="title-image" src="./images/ico128.png" height="90px"></a>
+        </div>
+	<div class="right" style="width:590px">
+		<div align="right">
+			<h1 class="style1">Critical Start &nbsp;</h1>
+			<button class="top_options" id="linkSearchProviders">Search Providers</button>
+			| 
+			<button class="top_options" id="linkOtherOptions">Options</button>
+			| 
+			<button class="top_options" id="linkFeedback"><a class="top_options" href="mailto:support@criticalstart.com?subject=Feedback for Threat Analytics Chrome Extension by Critical Start">Feedback</a></button>
+			|
+			<button class="top_options" id="linkAbout">About</button>
+			<br />
+			<br />
+		</div>
+		<div align="right">
+		    <button class="top_options" id="linkRSASecurityAnalytics">Security Analytics</button>
+			| 
+            <button class="top_options" id="linkNWISecurityAnalytics">NetWitness</button>
+			| 
+            <button class="top_options" id="linkCBCSecurityAnalytics">Carbon Black</button>
+		</div>
+	</div>
+	  
+       <div class="clear"></div>
+    </div>
+</div>
+
+<hr />
+
+
+<div align="center">
+
+<div id="page1">
+    <h3>Add More Search  Options</h3>
+    <p align="left">
+        To add a new search option, enter the search term as "TESTSEARCH" and copy the complete (including http://) URL of the results page to the 'Link' field below. You can also use "%s" to denote search terms. This could be useful when you are copy-pasting from Chrome settings.
+        <br/>
+        <br/>
+        Most users will need to use the POST function - just ignore.  The POST function is useful when you want to POST (versus GET) a search term to an application or API.  You would copy the destination URL to the 'Link' field and add the raw POST data in the 'Add POST value' field.  The HTTP POST will come from the Chrome extension by default, which some applications/API's will not allow.  In that case use a PROXY to send the POST. A simple proxy script can be found at <a href="http://www.criticalstart.com/?p=3430">http://www.criticalstart.com/?p=3430<a/>.
+        <br/>
+        <br/>
+        
+
+        For more information visit <a href="http://www.criticalstart.com/threat-analytics-chrome-plugin/">http://www.criticalstart.com/threat-analytics-chrome-plugin/<a/>
+    </p>
+	<table>
+    <tr>
+        <th>Display name</th>
+        <th>Link</th>
+    </tr>
+    <tr>
+        <td><input type='text' id='newname' size='20' maxlength='30'></td>
+        <td><input type='text' id='newlink' size='80' maxlength='500'></td>
+    </tr>
+	<tr class="postRow">
+        <td><input type='checkbox' id='newpost' size='20' maxlength='30'>Add POST value</td>
+        <td><textarea disabled="true" id='newpostdata' size='80' maxlength='500'></textarea></td>
+    </tr>
+    <tr class="postProxyRow">
+        <td><input disabled="true" type='checkbox' id='newpostproxy' size='20' maxlength='30'>Add Proxy URL</td>
+        <td><input disabled="true" type='text' id='newpostproxylink' size='80' maxlength='500'></td>
+    </tr>
+    </table>
+    <button id="buttonAddNewProvider">Add new option</button>
+	<div id="status_addmanually"></div>
+	
+<br/>	
+<div id="current" style="">
+	<h3>Manage Context Menu Items</h3>
+	<input type="hidden" value="0" id="curnum">
+    
+	<ul>
+		<li class="listHeading">
+			<div>
+				<span style="width:20px;"></span>
+				<span style="width:90px;">Display label</span>
+				<span style="width:10px;">P</span>
+				<span style="width:300px;">Link</span>
+				<span style="width:40px;">Enabled?</span>
+				<span style="width:40px;margin-left: 20px;">Delete</span>
+				<span style="width:40px;line-height: 14px;">From Download</span>
+				<input class="listItemGroups " title="Group 1" id="group1" style="width:75px;line-height: 14px;margin-left: 10px;margin-right: 0px;" value="Group 1"></input>
+				<input class="listItemGroups " title="Group 2" id="group2" style="width:75px;line-height: 14px;margin-right: 0px;" value="Group 2"></input>
+				<div class="groupHeader">
+					<input type="checkbox" id="enableGroup3" class="enableGroup">
+					<input class="listItemGroups " title="Group 3" id="group3" style="width:75px;line-height: 14px;margin-right: 0px;" value="Change Me"></input>
+				</div>
+			</div>
+		</li>
+	</ul>
+    <ul id="options_list_ul">
+		
+	</ul>
+    <br>
+    
+    <button id="buttonSaveConfig"> Save new config </button>
+    <button id="buttonResetDefault"> Reset to default </button>
+    <div id="status"></div>
+    
+</div>  
+</div>
+
+
+<div id="page2" style="display:none">
+    <h3>Search Results Options</h3>
+    <table>
+    <tr><td><input type="checkbox" id="ask_bg"></td> <td>Open results in a background tab</td></tr>
+    <tr><td><input type="checkbox" id="ask_next"></td> <td>The new tab should be next to the current tab</td></tr>
+	<tr><td><input type="checkbox" id="ask_newwindow"></td> <td>Open group tabs in new window</td></tr>
+	<tr><td><input type="checkbox" id="ask_options"></td> <td>Show link to extension options at the end of context menu</td></tr>
+    </table>
+    <button id="buttonSaveSearchOptions"> Save </button>
+    <div id="status_otheroptions"></div>
+	<br/>
+	<h3>Configuration File Options</h3>
+    <table>
+     <tr>
+        <td class="column">File URL</td>
+        <td><input type='text' id='configUrl' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Use groups from this download</td>
+        <td><input type='checkbox' id='configUseGroups' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Encrypted</td>
+        <td><input type='checkbox' id='configEnc' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Encryption Key</td>
+        <td><input type='text' id='configEncKey' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Refresh Automatically</td>
+        <td><input type='checkbox' id='configAutoRefresh' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Last Refreshed on</td>
+        <td><span id='configLastRefresh'></span></td>
+    </tr>
+    </table>
+    <button id="buttonConfigOptions"> Save </button>
+    <button id="buttonConfigUpdateNow"> Refresh Now </button>
+    <div id="status_configoptions"></div>
+	<br/>
+	<h3>Export/Import Search Options</h3>
+	<textarea id="exporttext" cols="110" rows="12"></textarea>
+	<br />Use the above string to transfer your search engine options from one install of Chrome to another effortlessly.
+	<br />Just copy the string from here to the options page in other install of chrome (or vice-versa)	and press 'Save'
+	<br />Warning: Editing the above string may cause unexpected behaviour!
+	<br />
+	<button id="buttonSaveImport"> Save </button>
+    <div id="status_import"></div>
+</div>
+
+
+<div id="page3" style="display:none">
+    
+    <div class="contain">
+      <h3>About Critical Start</h3>
+        <p>Version: 4.0
+        |
+        <a href="http://www.criticalstart.com/threat-analytics-chrome-plugin/" target="_blank">Extension home</a>
+		</p>
+		<br/>
+		<p align="left">Critical Start is a security company focused on the prevention, detection, and response to advanced threats.  Our goal is to measurably improve the security capabilities of our customers at the lowest cost and least complexity.  While focused on security services, we also resell a limited set of security products.</p><br/>
+		<p align="left">Critical Start was founded on a few simple concepts:
+		<ul align="left" style="margin-left: 30px;">
+		<li style="height:20px;list-style: disc;background-color: transparent;">Improve security capability (people, process, configuration, and technology)</li>
+		<li style="height:20px;list-style: disc;background-color: transparent;">Do it at the lowest cost possible (acquisition and ongoing)</li>
+		<li style="height:20px;list-style: disc;background-color: transparent;">Minimize complexity</li>
+		</ul></p><br/>
+
+		<br/><br/>
+		<p>Thanks to Ashu Dwivedi (<a href="http://ashutoshdwivedi.com/" target="_blank">http://ashutoshdwivedi.com/</a>) for his generous contributions to the original Context Menu Search extension.
+		</p>
+    </div>
+</div>
+
+
+<div id="page4" style="display:none">
+	<h3><a target="about_blank" href="http://www.criticalstart.com/?p=1046">Security Analytics Configuration</a></h3>
+	<form id="formRSAConfigOptions">
+    <table class="RSATable">
+    <tr>
+        <td class="column">Paste example link from Security Analytics Investigation to autofill settings.</td>
+        <td><input type='text' id='RSAConfigExampleLink' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Enable RSA Security Analytics Settings</td>
+        <td><input type='checkbox' id='RSAConfigEnable' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Enable debug popup window</td>
+        <td><input type='checkbox' id='RSAConfigPopup' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">HTTPS (SSL) Enabled</td>
+        <td><input type='checkbox' id='RSAConfigUseHttps' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Switch Focus to New Tab</td>
+        <td><input type='checkbox' id='RSAConfigNewTab' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Security Analytics Host  (IP Address/Hostname)</td>
+        <td><input type='text' id='RSAConfigHost' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Port Number (leave blank if port 80 and HTTP or port 443 and HTTPS)</td>
+        <td><input type='text' id='RSAConfigPort' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">DeviceID</td>
+        <td><input type='text' id='RSAConfigDevId' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 1 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='RSAConfigRange1' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 2 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='RSAConfigRange2' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 3 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='RSAConfigRange3' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 4 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='RSAConfigRange4' title='Enter an integer value'></td>
+    </tr>    
+    </table>
+    <button id="buttonRSAConfigOptions"> Save new config </button>
+	</form>
+    <div id="status_RSAConfigOptions"></div>
+    <br/>
+    
+    <h3>Add More Query Options</h3>
+    <p>To add a new query, replace the search term with "TESTSEARCH" in your query and copy the query to the 'Query' field below.</p>
+	<table>
+    <tr>
+        <th>Display name</th>
+        <th>Security Analytics Pivot (Query)</th>
+    </tr>
+    <tr>
+        <td><input type='text' id='RSANewName' size='20' maxlength='30'></td>
+        <td><input type='text' id='RSANewQuery' size='80' maxlength='500'></td>
+    </tr>
+    </table>
+    <button id="buttonRSAAddNewQuery">Add new query</button>
+	<div id="statusRSAAddQuery"></div>
+    <br/>	
+    
+    <div id="current" style="">
+	<h3>Manage Security Analytics Pivot Queries</h3>
+	<input type="hidden" value="0" id="curnum">
+    
+	<ul>
+		<li class="listHeading">
+			<div>
+				<span style="width:20px;"></span>
+				<span style="width:200px;">Display label</span>
+				<span style="width:360px;">Query</span>
+				<span style="width:75px;">Enabled</span>
+				<span style="width:75px;margin-left: 20px;">Delete</span>
+			</div>
+		</li>
+	</ul>
+    <ul id="RSAqueries_list_ul">
+		
+	</ul>
+    <br>
+    
+    <button id="buttonRSASaveQueries"> Save </button>
+    <div id="statusRSAsaveQueries"></div>
+    
+</div>      
+</div>
+
+
+<div id="page5" style="display:none">
+	<h3><a target="about_blank" href="http://www.criticalstart.com/?p=1046">NetWitness Investigator</a></h3>
+	<form id="formNWIConfigOptions">
+    <table class="NWITable">
+    <tr>
+        <td class="column">Paste example link from NetWitness Investigator to autofill settings.</td>
+        <td><input type='text' id='NWIConfigExampleLink' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Enable debug popup window</td>
+        <td><input type='checkbox' id='NWIConfigPopup' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Use GMT time - no time zone adjustment</td>
+        <td><input type='checkbox' id='NWIConfigGMT' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Enable NetWitness Investigator Settings</td>
+        <td><input type='checkbox' id='NWIConfigEnable' size='80' maxlength='500'></td>
+    </tr>	
+	<tr>
+        <td class="column">Host (IP Address/Hostname)</td>
+        <td><input type='text' id='NWIConfigHost' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Port Number</td>
+        <td><input type='text' id='NWIConfigPort' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Collection Name</td>
+        <td><input type='text' id='NWIConfigCollectionName' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 1 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='NWIConfigRange1' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 2 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='NWIConfigRange2' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 3 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='NWIConfigRange3' title='Enter an integer value'></td>
+    </tr>
+	<tr>
+        <td class="column">Search Range 4 in Hour(s)</td>
+        <td><input type='number' min="1" step="1" required id='NWIConfigRange4' title='Enter an integer value'></td>
+    </tr>    
+    </table>
+    <button id="buttonNWIConfigOptions"> Save new config  </button>
+	</form>
+    <div id="status_NWIConfigOptions"></div>
+    <br/>
+    
+    <h3>Add More Query Options</h3>
+    <p>To add a new query, replace the search term with "TESTSEARCH" in your query and copy the query to the 'Query' field below.</p>
+	<table>
+    <tr>
+        <th>Display name</th>
+        <th>NetWitness Pivot (Query)</th>
+    </tr>
+    <tr>
+        <td><input type='text' id='NWINewName' size='20' maxlength='30'></td>
+        <td><input type='text' id='NWINewQuery' size='80' maxlength='500'></td>
+    </tr>
+    </table>
+    <button id="buttonNWIAddNewQuery">Add new query</button>
+	<div id="statusNWIAddQuery"></div>
+    <br/>	
+    
+    <div id="current" style="">
+	<h3>NetWitness Investigator Pivot Queries</h3>
+	<input type="hidden" value="0" id="curnum">
+    
+	<ul>
+		<li class="listHeading">
+			<div>
+				<span style="width:20px;"></span>
+				<span style="width:200px;">Display label</span>
+				<span style="width:360px;">Query</span>
+				<span style="width:75px;">Enabled</span>
+				<span style="width:75px;margin-left: 20px;">Delete</span>
+			</div>
+		</li>
+	</ul>
+    <ul id="NWIqueries_list_ul">
+		
+	</ul>
+    <br>
+    
+    <button id="buttonNWISaveQueries"> Save </button>
+    <div id="statusNWIsaveQueries"></div>
+    
+</div>      
+</div>
+
+
+
+<div id="page6" style="display:none">
+	<h3><a target="about_blank" href="http://www.criticalstart.com/?p=1046">Carbon Black Configuration</a></h3>
+	<form id="formCBCConfigOptions">
+    <table class="CBCTable">
+    <tr>
+        <td class="column">Carbon Black Hostname or IP Address</td>
+        <td><input type='text' id='CBCConfigHost' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Enable Carbon Black Settings</td>
+        <td><input type='checkbox' id='CBCConfigEnable' size='80' maxlength='500'></td>
+    </tr>	
+	<tr>
+        <td class="column">Enable debug popup window</td>
+        <td><input type='checkbox' id='CBCConfigPopup' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">HTTPS (SSL) Enabled</td>
+        <td><input type='checkbox' id='CBCConfigUseHttps' size='80' maxlength='500'></td>
+    </tr>
+
+	<tr>
+        <td class="column">Switch Focus to New Tab</td>
+        <td><input type='checkbox' id='CBCConfigNewTab' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Carbon Black URL Version (Default is 1)</td>
+        <td><input type='text' id='CBCConfigURLVersion' size='80' maxlength='500'></td>
+    </tr>
+	<tr>
+        <td class="column">Port Number (Leave blank if port 80 and HTTP or port 443 and HTTPS)</td>
+        <td><input type='text' id='CBCConfigPort' size='80' maxlength='500'></td>
+    </tr>
+    </table>
+    <button id="buttonCBCConfigOptions"> Save new config  </button>
+	</form>
+    <div id="status_CBCConfigOptions"></div>
+    <br/>
+    
+    <h3>Add More Query Options</h3>
+    <p>To add a new query, replace the search term with "TESTSEARCH" in your query and copy the query to the 'Query' field below.</p>
+	<table>
+    <tr>
+        <th>Display name</th>
+        <th>Carbon Black Query</th>
+    </tr>
+    <tr>
+        <td><input type='text' id='CBCNewName' size='20' maxlength='30'></td>
+        <td><input type='text' id='CBCNewQuery' size='80' maxlength='500'></td>
+    </tr>
+    </table>
+    <button id="buttonCBCAddNewQuery">Add new query</button>
+	<div id="statusCBCAddQuery"></div>
+    <br/>	
+    
+    <div id="current" style="">
+	<h3>Carbon Black Queries</h3>
+	<input type="hidden" value="0" id="curnum">
+    
+	<ul>
+		<li class="listHeading">
+			<div>
+				<span style="width:20px;"></span>
+				<span style="width:200px;">Display label</span>
+				<span style="width:360px;">Query</span>
+				<span style="width:75px;">Enabled</span>
+				<span style="width:75px;margin-left: 20px;">Delete</span>
+			</div>
+		</li>
+	</ul>
+    <ul id="CBCqueries_list_ul">
+		
+	</ul>
+    <br>
+    
+    <button id="buttonCBCSaveQueries"> Save </button>
+    <div id="statusCBCsaveQueries"></div>
+    
+</div>      
+</div>
+
+<hr />
+<br/><br/><p>Copyright 2015 Critical Start LLC. All rights reserved.(<a target="_blank" href="http://www.criticalstart.com">http://www.criticalstart.com</a>)</p>
+</div>
+</div>
+</body>
+
+</html>
